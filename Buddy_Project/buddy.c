@@ -238,29 +238,26 @@ void *balloc(size_t size) {
     if(size==0 || size>4072){
         return NULL;
     }
-    // if(flists[MAX_LEVEL]==NULL){ //if first time calling this
-    //     head *newHead = new();
-    //     addToLinkedListFront(newHead);
-    // }
-    int currLevel = level(size);
-    //printf("level: %d\n", currLevel);
-    head *currHead = findSmallestFree(currLevel);
+
     if(flists[MAX_LEVEL]==NULL){ //if first time calling this
         head *newHead = new();
-        if(currLevel=MAX_LEVEL){
-            currHead = newHead;
-            currHead->status = STATUS_USED; //set current block status to used
-            addToLinkedListFront(currHead);
-        }
-        else addToLinkedListFront(newHead);
+        addToLinkedListFront(newHead);
     }
-    if(currHead==NULL){
+
+    int currLevel = level(size);
+    
+    head *currHead = findSmallestFree(currLevel);
+    if(currHead!=NULL){ //if level free
+        //split nodes to currLevel, if currLevel is max, wont split
+        currHead = splitNodesForLevel(currLevel, flists[MAX_LEVEL]);
+        currHead->status = STATUS_USED; //set current block status to used
+    }else{
         //if no free blocks split from the top down until desired level
         currHead = splitNodesForLevel(currLevel, flists[MAX_LEVEL]);
+
         for(int i=currLevel;i<MAX_LEVEL;i++){
             bfree(hide(flists[i]));  //set all intermediate heads in flist to free
-        }
-        
+        }      
         //Say free node (a) is head of flist[level], then a->next (or next->next etc)
         //is the block we want and we need to hide the header of it
         head *nextHead = currHead->next; 
