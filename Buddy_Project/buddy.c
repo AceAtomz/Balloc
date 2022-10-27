@@ -245,7 +245,7 @@ void *balloc(size_t size) {
     }
 
     int currLevel = level(size);
-    
+    //printf("level: %d\n",currLevel);
     head *currHead = findSmallestFree(currLevel);
     if(currHead!=NULL){ //if level free
         //split nodes to currLevel, if currLevel is max, wont split

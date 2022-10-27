@@ -139,6 +139,7 @@ void assertBallocStuffSmall(bool checkZero, head *nodeJustAllocated) {
     // This function asserts that there is 1 node in each of the flist slots.
     // It also checks flists[0] if checkZero is true
     for (int i = 1; i < MAX_LEVEL; ++i) {
+        //if(flists[i]!=NULL) blockinfo(flists[i]);
         assert(flists[i] != NULL);
         assert(flists[i]->prev == NULL);
         assert(flists[i]->next == NULL);
@@ -219,6 +220,7 @@ bool testBallocAndBFree() {
         array[i] = balloc(8);
     }
     for (int i = 1; i < LEVELS; ++i) {
+        if(flists[i]!=NULL) blockinfo(flists[i]);
         assert(flists[i] == NULL);
     }
     head *h = flists[0];
