@@ -175,7 +175,7 @@ bool testBalloc() {
     for (int i = 0; i < MAX_LEVEL; ++i) {
         assert(flists[i] == NULL);
     }
-
+    
     void *tempSmall = balloc(7);  // 7 + 24 < 31
     // now, there has to be one head* in each of the MAX_LEVEL. In flists[0] there has to be 2, 
     // a free one and an used one.

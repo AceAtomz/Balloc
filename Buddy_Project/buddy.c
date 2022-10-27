@@ -225,17 +225,32 @@ head *splitNodesForLevel(int level, head *freeBlock) {
 }
 
 
-//ALL YOU NEED TO COMPLETE
-
+//TODO: ALL YOU NEED TO COMPLETE
+//Check if size is 0
+//Determine required level based upon size
+//Either find a free block at the appropriate level in flists, or
+//split the necessary blocks down to that level.
+// if required remembering to update flists and
+// return a pointer to the allocated memory block
+//Finally hide the header and return the pointer
 
 void *balloc(size_t size) {
+    if(size==0){
+        return NULL;
+    }
+
+    int currLevel = level(size);
+
+    head * currHead = findSmallestFree(currLevel);
+    if(currHead==NULL){
+        currHead = new();
+        currHead->status = STATUS_USED;
+    } 
     
+    addToLinkedListFront(currHead);
+    currHead = hide(currHead);
 
-
-
-
-
-
+    //blockinfo(currHead);
 }
 
 /**
