@@ -113,7 +113,29 @@ int testsPartA() {
     printf("--------------------------------\n\n\n");
 }
 
+bool myTestFullBlock() {
+    // test if a block gets full of 3byte heads
+
+    int num_tries = 128;
+    // 8 + 24 = 32 => Level 0.
+    // We allocate 128 * 32 = 4096 This means that there must be no things in flists[1:7], but 128 in flists[0]
+    void *array[num_tries];
+    for (int i = 0; i < num_tries; ++i) {
+        array[i] = balloc(8);
+    }
+    for (int i = 1; i < LEVELS; ++i) {
+        if(flists[i]!=NULL) blockinfo(flists[i]);
+        assert(flists[i] == NULL);
+    }
+    printf("my Test is successful\n");
+}
+
+
 int testsPartB() {
+    printf("--------------------------------\n");
+    myTestFullBlock();
+    printf("--------------------------------\n");
+
     // here we need to free the memory and clean the free list between tests,
     // as each test assumes a clean slate.
     printf("--------------------------------\n");
