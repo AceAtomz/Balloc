@@ -233,41 +233,24 @@ head *splitNodesForLevel(int level, head *freeBlock) {
 // if required remembering to update flists and
 // return a pointer to the allocated memory block
 //Finally hide the header and return the pointer
-
 void *balloc(size_t size) {
     if(size==0 || size>4072){
         return NULL;
     }
 
-    if(flists[MAX_LEVEL]==NULL){ //if first time calling this
-        head *newHead = new();
-        addToLinkedListFront(newHead);
-    }
-
     int currLevel = level(size);
-    //printf("level: %d\n",currLevel);
     head *currHead = findSmallestFree(currLevel);
-    if(currHead!=NULL){ //if level free
-        //split nodes to currLevel, if currLevel is max, wont split
-        currHead = splitNodesForLevel(currLevel, flists[MAX_LEVEL]);
-        currHead->status = STATUS_USED; //set current block status to used
-    }else{
-        //if no free blocks split from the top down until desired level
-        currHead = splitNodesForLevel(currLevel, flists[MAX_LEVEL]);
 
-        for(int i=currLevel;i<MAX_LEVEL;i++){
-            bfree(hide(flists[i]));  //set all intermediate heads in flist to free
-        }      
-        //Say free node (a) is head of flist[level], then a->next (or next->next etc)
-        //is the block we want and we need to hide the header of it
-        head *nextHead = currHead->next; 
-        while(nextHead!=NULL){
-            if(nextHead->status == STATUS_USED)
-                currHead = nextHead;
-            nextHead = nextHead->next;
-        }
+    //No free block avail, add new to flists
+    if(currHead==NULL){ 
+        currHead = new();
+        addToLinkedListFront(currHead);
     }
-    currHead = hide(currHead);
+
+    //split nodes to currLevel, if currLevel is max, wont split
+    currHead = splitNodesForLevel(currLevel, currHead);
+    currHead->status = STATUS_USED; //set current block status to used
+    return hide(currHead);
 }
 
 /**
