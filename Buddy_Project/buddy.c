@@ -239,35 +239,39 @@ void *balloc(size_t size) {
         return NULL;
     }
 
-    if(flists[MAX_LEVEL]==NULL){ //if first time calling this
-        head *newHead = new();
-        addToLinkedListFront(newHead);
-    }
-
     int currLevel = level(size);
-    //printf("level: %d\n",currLevel);
     head *currHead = findSmallestFree(currLevel);
-    if(currHead!=NULL){ //if level free
-        //split nodes to currLevel, if currLevel is max, wont split
-        currHead = splitNodesForLevel(currLevel, flists[MAX_LEVEL]);
-        currHead->status = STATUS_USED; //set current block status to used
-    }else{
-        //if no free blocks split from the top down until desired level
-        currHead = splitNodesForLevel(currLevel, flists[MAX_LEVEL]);
-
-        for(int i=currLevel;i<MAX_LEVEL;i++){
-            bfree(hide(flists[i]));  //set all intermediate heads in flist to free
-        }      
-        //Say free node (a) is head of flist[level], then a->next (or next->next etc)
-        //is the block we want and we need to hide the header of it
-        head *nextHead = currHead->next; 
-        while(nextHead!=NULL){
-            if(nextHead->status == STATUS_USED)
-                currHead = nextHead;
-            nextHead = nextHead->next;
-        }
+    //if(currHead==NULL) printf("need new block\n");
+    //if first time calling this or if no free block
+    if(currHead==NULL){ 
+        currHead = new();
+        addToLinkedListFront(currHead);
     }
-    currHead = hide(currHead);
+
+    //split nodes to currLevel, if currLevel is max, wont split
+    currHead = splitNodesForLevel(currLevel, currHead);
+    currHead->status = STATUS_USED; //set current block status to used
+
+    
+    //if(currHead!=NULL){ //if level free
+        
+    // }else{
+    //     //if no free blocks split from the top down until desired level
+    //     currHead = splitNodesForLevel(currLevel, flists[MAX_LEVEL]);
+
+    //     for(int i=currLevel;i<MAX_LEVEL;i++){
+    //         bfree(hide(flists[i]));  //set all intermediate heads in flist to free
+    //     }      
+    //     //Say free node (a) is head of flist[level], then a->next (or next->next etc)
+    //     //is the block we want and we need to hide the header of it
+    //     head *nextHead = currHead->next; 
+    //     while(nextHead!=NULL){
+    //         if(nextHead->status == STATUS_USED)
+    //             currHead = nextHead;
+    //         nextHead = nextHead->next;
+    //     }
+    // }
+    return hide(currHead);
 }
 
 /**
