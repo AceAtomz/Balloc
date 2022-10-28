@@ -224,30 +224,25 @@ head *splitNodesForLevel(int level, head *freeBlock) {
     return freeBlock;
 }
 
-
-//TODO: ALL YOU NEED TO COMPLETE
-//Check if size is 0
-//Determine required level based upon size
-//Either find a free block at the appropriate level in flists, or
-//split the necessary blocks down to that level.
-// if required remembering to update flists and
-// return a pointer to the allocated memory block
-//Finally hide the header and return the pointer
+/*Algorithm works as follows:
+* return NULL if size is 0 or larger than max page size
+* Determine required level based upon size
+* Find smallest free block in flists
+* if no blocks are free, add a new page to flists
+* Split the necessary blocks down to required level.
+* Set block to used
+* Hide the header and return the pointer
+*/
 void *balloc(size_t size) {
-    if(size==0 || size>4072){
-        return NULL;
-    }
+    if(size==0 || size>4072) return NULL;
 
     int currLevel = level(size);
     head *currHead = findSmallestFree(currLevel);
 
-    //No free block avail, add new to flists
-    if(currHead==NULL){ 
-        currHead = new();
-        addToLinkedListFront(currHead);
-    }
+    //No free block avail, create new block add to flists
+    if(currHead==NULL) addToLinkedListFront(currHead = new());
 
-    //split nodes to currLevel, if currLevel is max, wont split
+    //split nodes to currLevel
     currHead = splitNodesForLevel(currLevel, currHead);
     currHead->status = STATUS_USED; //set current block status to used
     return hide(currHead);
