@@ -113,26 +113,7 @@ int testsPartA() {
     printf("--------------------------------\n\n\n");
 }
 
-// bool myTestFullBlock() {
-//     // test if a block gets full of 3byte heads
-
-//     int num_tries = 128;
-//     // 8 + 24 = 32 => Level 0.
-//     // We allocate 128 * 32 = 4096 This means that there must be no things in flists[1:7], but 128 in flists[0]
-//     void *array[num_tries];
-//     for (int i = 0; i < num_tries; ++i) {
-//         array[i] = balloc(8);
-//     }
-//     for (int i = 1; i < LEVELS; ++i) {
-//         if(flists[i]!=NULL) blockinfo(flists[i]);
-//         assert(flists[i] == NULL);
-//     }
-//     printf("my Test is successful\n");
-// }
-
-bool myTestFullBlock(){
-    balloc(7);
-    balloc(7);
+bool printAllLevels(){ //prints all blocks in all levels
     for(int i=0;i<LEVELS;i++){
         head* temp = flists[i];
         if(temp!=NULL){
@@ -147,14 +128,7 @@ bool myTestFullBlock(){
     }
 }
 
-
 int testsPartB() {
-    printf("--------------------------------\n");
-    myTestFullBlock();
-    freeAll();
-    cleanFreeList();
-    printf("--------------------------------\n");
-
     // here we need to free the memory and clean the free list between tests,
     // as each test assumes a clean slate.
     printf("--------------------------------\n");
@@ -180,7 +154,6 @@ void assertBallocStuffSmall(bool checkZero, head *nodeJustAllocated) {
     // This function asserts that there is 1 node in each of the flist slots.
     // It also checks flists[0] if checkZero is true
     for (int i = 1; i < MAX_LEVEL; ++i) {
-        //if(flists[i]!=NULL) blockinfo(flists[i]);
         assert(flists[i] != NULL);
         assert(flists[i]->prev == NULL);
         assert(flists[i]->next == NULL);
@@ -229,7 +202,6 @@ bool testBalloc() {
     shouldBeNull = balloc(4090);
     assert(shouldBeNull == NULL);
     printf("Balloc is successful\n");
-
 }
 
 bool testBFree() {
